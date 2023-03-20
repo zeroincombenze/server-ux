@@ -1,4 +1,4 @@
-# Copyright 2017-19 ForgeFlow S.L. (https://www.forgeflow.com)
+# Copyright 2017 Eficent Business and IT Consulting Services S.L.
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
@@ -11,61 +11,70 @@ class TierReview(models.Model):
 
     name = fields.Char(related="definition_id.name", readonly=True)
     status = fields.Selection(
-        selection=[
-            ("pending", "Pending"),
-            ("rejected", "Rejected"),
-            ("approved", "Approved"),
-        ],
+        selection=[("pending", "Pending"),
+                   ("rejected", "Rejected"),
+                   ("approved", "Approved")],
         default="pending",
     )
-    model = fields.Char(string="Related Document Model", index=True)
-    res_id = fields.Integer(string="Related Document ID", index=True)
-    definition_id = fields.Many2one(comodel_name="tier.definition")
-    company_id = fields.Many2one(
-        related="definition_id.company_id",
-        store=True,
+    model = fields.Char(string='Related Document Model', index=True)
+    res_id = fields.Integer(string='Related Document ID', index=True)
+    definition_id = fields.Many2one(
+        comodel_name="tier.definition",
     )
-    review_type = fields.Selection(related="definition_id.review_type", readonly=True)
-    reviewer_id = fields.Many2one(related="definition_id.reviewer_id", readonly=True)
+    review_type = fields.Selection(
+        related="definition_id.review_type", readonly=True,
+    )
+    reviewer_id = fields.Many2one(
+        related="definition_id.reviewer_id", readonly=True,
+    )
     reviewer_group_id = fields.Many2one(
-        related="definition_id.reviewer_group_id", readonly=True
+        related="definition_id.reviewer_group_id", readonly=True,
     )
     reviewer_field_id = fields.Many2one(
         related="definition_id.reviewer_field_id", readonly=True
     )
     reviewer_ids = fields.Many2many(
-        string="Reviewers",
-        comodel_name="res.users",
-        compute="_compute_reviewer_ids",
-        store=True,
+        string="Reviewers", comodel_name="res.users",
+        compute="_compute_reviewer_ids", store=True,
     )
     sequence = fields.Integer(string="Tier")
-    todo_by = fields.Char(compute="_compute_todo_by", store=True)
-    done_by = fields.Many2one(comodel_name="res.users")
-    requested_by = fields.Many2one(comodel_name="res.users")
-    reviewed_date = fields.Datetime(string="Validation Date")
-    has_comment = fields.Boolean(related="definition_id.has_comment", readonly=True)
-    comment = fields.Char(string="Comments")
+    todo_by = fields.Char(
+        compute="_compute_todo_by",
+        compute_sudo=True,
+        store=True,
+    )
+    done_by = fields.Many2one(
+        comodel_name="res.users",
+    )
+    requested_by = fields.Many2one(
+        comodel_name="res.users",
+    )
+    reviewed_date = fields.Datetime(string='Validation Date')
     can_review = fields.Boolean(
-        compute="_compute_can_review",
+        compute='_compute_can_review',
         store=True,
         help="""Can review will be marked if the review is pending and the
         approve sequence has been achieved""",
     )
-    approve_sequence = fields.Boolean(
-        related="definition_id.approve_sequence", readonly=True
+    has_comment = fields.Boolean(
+        related='definition_id.has_comment',
+        readonly=True,
     )
-    approve_sequence_bypass = fields.Boolean(
-        related="definition_id.approve_sequence_bypass", readonly=True
+    comment = fields.Char(
+        string='Comments',
+    )
+    approve_sequence = fields.Boolean(
+        related='definition_id.approve_sequence',
+        readonly=True,
     )
 
-    @api.depends("definition_id.approve_sequence")
+    @api.depends('definition_id.approve_sequence')
     def _compute_can_review(self):
         for record in self:
             record.can_review = record._can_review_value()
 
     def _can_review_value(self):
-        if self.status != "pending":
+        if self.status != 'pending':
             return False
         if not self.approve_sequence:
             return True
@@ -78,26 +87,29 @@ class TierReview(models.Model):
 
     @api.model
     def _get_reviewer_fields(self):
-        return ["reviewer_id", "reviewer_group_id", "reviewer_group_id.users"]
+        return ['reviewer_id', 'reviewer_group_id', 'reviewer_group_id.users']
 
+    @api.multi
     @api.depends(lambda self: self._get_reviewer_fields())
     def _compute_reviewer_ids(self):
         for rec in self:
             rec.reviewer_ids = rec._get_reviewers()
 
-    @api.depends("reviewer_ids")
+    @api.depends("reviewer_ids", "reviewer_group_id")
     def _compute_todo_by(self):
-        """Show by group or by abbrev list of names"""
+        """ Show by group or by abbrev list of names """
         num_show = 3  # Max number of users to display
         for rec in self:
-            todo_by = False
             if rec.reviewer_group_id:
                 todo_by = _("Group %s") % rec.reviewer_group_id.name
             else:
-                todo_by = ", ".join(rec.reviewer_ids[:num_show].mapped("display_name"))
+                todo_by = ", ".join(
+                    rec.reviewer_ids[:num_show].mapped("display_name")
+                )
                 num_users = len(rec.reviewer_ids)
                 if num_users > num_show:
-                    todo_by = "{} (and {} more)".format(todo_by, num_users - num_show)
+                    todo_by = _("%s (and %s more)")\
+                        % (todo_by, num_users - num_show, )
             rec.todo_by = todo_by
 
     def _get_reviewers(self):

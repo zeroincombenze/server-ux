@@ -1,13 +1,15 @@
-# Copyright 2019 ForgeFlow S.L. (https://www.forgeflow.com)
+# Copyright 2019 Eficent Business and IT Consulting Services S.L.
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models, modules
 
 
 class Users(models.Model):
-    _inherit = "res.users"
+    _inherit = 'res.users'
 
-    review_ids = fields.Many2many(string="Reviews", comodel_name="tier.review")
+    review_ids = fields.Many2many(
+        string="Reviews", comodel_name="tier.review"
+    )
 
     @api.model
     def review_user_count(self):
@@ -20,13 +22,11 @@ class Users(models.Model):
         review_groups = self.env["tier.review"].read_group(domain, ["model"], ["model"])
         for review_group in review_groups:
             model = review_group["model"]
-            Model = self.env[model]
             reviews = self.env["tier.review"].search(review_group.get("__domain"))
-            # Skip Models not having Tier Validation enabled (example: was unistalled)
-            if reviews and hasattr(Model, "can_review"):
+            if reviews:
                 records = (
-                    Model.with_user(self.env.user)
-                    .with_context(active_test=False)
+                    self.env[model]
+                    .sudo(self.env.user)
                     .search([("id", "in", reviews.mapped("res_id"))])
                     .filtered(lambda x: not x.rejected and x.can_review)
                 )
@@ -42,16 +42,16 @@ class Users(models.Model):
 
     @api.model
     def get_reviews(self, data):
-        review_obj = self.env["tier.review"].with_context(lang=self.env.user.lang)
-        res = review_obj.search_read([("id", "in", data.get("res_ids"))])
+        review_obj = self.env['tier.review'].with_context(
+            lang=self.env.user.lang)
+        res = review_obj.search_read([('id', 'in', data.get('res_ids'))])
         for r in res:
             # Get the translated status value.
-            r["display_status"] = dict(
-                review_obj.fields_get("status")["status"]["selection"]
-            ).get(r.get("status"))
+            r['display_status'] = dict(
+                review_obj.fields_get('status')['status']['selection']
+            ).get(r.get('status'))
             # Convert to datetime timezone
-            if r["reviewed_date"]:
-                r["reviewed_date"] = fields.Datetime.context_timestamp(
-                    self, r["reviewed_date"]
-                )
+            if r['reviewed_date']:
+                r['reviewed_date'] = \
+                    fields.Datetime.context_timestamp(self, r['reviewed_date'])
         return res

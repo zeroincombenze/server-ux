@@ -3,15 +3,15 @@
 
 {
     "name": "Base Sub State",
-    "version": "14.0.1.0.0",
+    "version": "12.0.1.0.0",
     "category": "Tools",
     "author": "Akretion, " "Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/server-ux",
     "license": "AGPL-3",
-    "depends": ["base", "mail"],
+    "depends": ["base"],
     "data": [
-        "security/base_substate_security.xml",
-        "security/ir.model.access.csv",
+        'security/base_substate_security.xml',
+        'security/ir.model.access.csv',
         "views/base_substate_type_views.xml",
         "views/base_substate_value_views.xml",
         "views/base_substate_views.xml",

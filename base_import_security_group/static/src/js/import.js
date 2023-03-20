@@ -1,24 +1,40 @@
-/*
- * Copyright 2021 Stefan Rijnhart <stefan@opener.amsterdam>
- * Copyright 2021 Chandresh Thakkar OSI <cthakkar@opensourceintegrators.com>
- * Copyright 2019 Iryna Vushnevska <i.vyshnevska@mobilunity.com>
- * Copyright 2017 Antonio Esposito <a.esposito@onestein.nl>
- * License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
- *
- * Patch the method on the ImportMenu class that determines whether the
- * import button under Favorites will be displayed to return false if the
- * user does not belong to this module's access group.
- */
-odoo.define("base_import_security_group.group_import", function (require) {
+odoo.define('web.ListImport', function (require) {
     "use strict";
 
-    const ImportMenu = require("base_import.ImportMenu");
-    const shouldBeDisplayed_orig = ImportMenu.shouldBeDisplayed;
+    var KanbanView = require('web.KanbanView');
+    var ListView = require('web.ListView');
+    var session = require('web.session');
 
-    ImportMenu.shouldBeDisplayed = function (env) {
-        return (
-            shouldBeDisplayed_orig(env) &&
-            env.session.base_import_security_group__allow_import === 1
-        );
+    var ImportViewMixin = {
+
+    init: function (viewInfo, params) {
+
+        var self = this;
+        var result = self._super.apply(self, arguments);
+        var base_group = 'base_import_security_group.group_import_csv';
+
+        session.user_has_group(base_group).then(function (result){
+            var importEnabled = false;
+            if (result){
+                importEnabled =  true;
+            }
+            self.controllerParams.importEnabled = importEnabled;
+            });
+        },
+
     };
+
+    ListView.include({
+    init: function () {
+        this._super.apply(this, arguments);
+        ImportViewMixin.init.apply(this, arguments);
+        },
+    });
+
+    KanbanView.include({
+    init: function () {
+        this._super.apply(this, arguments);
+        ImportViewMixin.init.apply(this, arguments);
+        },
+    });
 });

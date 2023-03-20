@@ -6,5 +6,3 @@
 * Sandip Mangukiya <smangukiya@ursainfosystems.com>
 * Maxime Chambreuil <mchambreuil@ursainfosystems.com>
 * Olivier Jossen <olivier.jossen@braintec-group.com>
-* Alexandre Díaz <alexandre.diaz@tecnativa.com>
-* Kevin Khao <kevin.khao@akretion.com>

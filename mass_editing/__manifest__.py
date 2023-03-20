@@ -2,21 +2,21 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "Mass Editing",
-    "version": "14.0.1.1.2",
+    "version": "12.0.2.2.2",
     "author": "Serpent Consulting Services Pvt. Ltd., "
     "Tecnativa, "
     "GRAP, "
-    "Iván Todorovich, "
     "Odoo Community Association (OCA)",
     "category": "Tools",
     "website": "https://github.com/OCA/server-ux",
     "license": "AGPL-3",
     "summary": "Mass Editing",
-    "depends": ["base"],
+    "uninstall_hook": "uninstall_hook",
+    "depends": ["mass_operation_abstract"],
     "data": [
         "security/ir.model.access.csv",
-        "views/ir_actions_server.xml",
-        "wizard/mass_editing_wizard.xml",
+        "views/mass_editing_view.xml",
+        "wizard/view_mass_editing_wizard.xml",
     ],
     "demo": ["demo/mass_editing.xml"],
 }

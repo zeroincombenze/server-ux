@@ -17,12 +17,12 @@ msgstr ""
 "X-Generator: Weblate 3.0.1\n"
 
 #. module: sequence_reset_period
-#: model:ir.model.fields.selection,name:sequence_reset_period.selection__ir_sequence__range_reset__daily
+#: selection:ir.sequence,range_reset:0
 msgid "Daily"
 msgstr "Diario"
 
 #. module: sequence_reset_period
-#: model:ir.model.fields.selection,name:sequence_reset_period.selection__ir_sequence__range_reset__monthly
+#: selection:ir.sequence,range_reset:0
 msgid "Monthly"
 msgstr "Mensual"
 
@@ -38,11 +38,11 @@ msgid "Sequence"
 msgstr "ir.sequence"
 
 #. module: sequence_reset_period
-#: model:ir.model.fields.selection,name:sequence_reset_period.selection__ir_sequence__range_reset__weekly
+#: selection:ir.sequence,range_reset:0
 msgid "Weekly"
 msgstr "Semanal"
 
 #. module: sequence_reset_period
-#: model:ir.model.fields.selection,name:sequence_reset_period.selection__ir_sequence__range_reset__yearly
+#: selection:ir.sequence,range_reset:0
 msgid "Yearly"
 msgstr "Anual"
