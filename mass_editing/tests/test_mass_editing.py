@@ -6,7 +6,7 @@
 from ast import literal_eval
 
 from odoo.exceptions import ValidationError
-from odoo.tests import Form, common
+from odoo.tests import Form, common, new_test_user
 
 
 @common.tagged("-at_install", "post_install")
@@ -21,12 +21,21 @@ class TestMassEditing(common.SavepointCase):
         self.IrActionsActWindow = self.env["ir.actions.act_window"]
 
         self.mass_editing_user = self.env.ref("mass_editing.mass_editing_user")
+        self.mass_editing_partner = self.env.ref("mass_editing.mass_editing_partner")
         self.mass_editing_partner_title = self.env.ref(
             "mass_editing.mass_editing_partner_title"
         )
-
-        self.users = self.env["res.users"].search([])
-        self.user = self.env.ref("base.user_demo")
+        user_admin = self.env.ref("base.user_admin")
+        user_demo = self.env.ref("base.user_demo")
+        self.users = self.env["res.users"].search(
+            [("id", "not in", (user_admin.id, user_demo.id))]
+        )
+        self.user = new_test_user(
+            self.env,
+            login="test-mass_editing-user",
+            groups="base.group_system,base.group_partner_manager",
+        )
+        self.partner = self.user.partner_id
         self.partner_title = self._create_partner_title()
 
     def _create_partner_title(self):
@@ -178,6 +187,32 @@ class TestMassEditing(common.SavepointCase):
             self.mass_editing_user.write(
                 {"model_id": self.env.ref("base.model_res_country").id}
             )
+
+    def test_mass_edit_o2m_child_ids(self):
+        """Test Case for MASS EDITING which will remove and after add
+        Partner's child_ids and will assert the same."""
+        # Add one child_ids
+        self.env["res.partner"].with_user(self.user).create(
+            {"name": "test", "parent_id": self.partner.id}
+        )
+        self.assertTrue(self.partner.child_ids)
+        # Remove one child_ids
+        vals = {"selection__child_ids": "remove_o2m"}
+        self._create_wizard_and_apply_values(
+            self.mass_editing_partner, self.partner, vals
+        )
+        self.assertFalse(
+            self.partner.child_ids.exists(), "Partner's child_ids should be removed."
+        )
+        # Set one child_ids
+        vals = {
+            "selection__child_ids": "set_o2m",
+            "child_ids": [(0, 0, {"name": "test", "parent_id": self.partner.id})],
+        }
+        self._create_wizard_and_apply_values(
+            self.mass_editing_partner, self.partner, vals
+        )
+        self.assertTrue(self.partner.child_ids, "Partner's log_ids should be set.")
 
     def test_onchanges(self):
         """Test that form onchanges do what they're supposed to"""

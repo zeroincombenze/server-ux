@@ -1,5 +1,6 @@
 # Copyright 2020 Tecnativa - Carlos Dauden
 # Copyright 2020 Tecnativa - Pedro M. Baeza
+# Copyright 2022 Tecnativa - Víctor Martínez
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from lxml import etree
@@ -22,11 +23,7 @@ class Base(models.AbstractModel):
             if node:
                 elem = etree.Element(
                     "field",
-                    {
-                        "name": "ir_ui_custom_filter_%s" % custom_filter.id,
-                        "string": custom_filter.name,
-                        "custom_field_filter": custom_filter.expression,
-                    },
+                    {"name": custom_filter.expression, "string": custom_filter.name},
                 )
                 node[0].addnext(elem)
         res["arch"] = etree.tostring(arch)
@@ -62,7 +59,7 @@ class Base(models.AbstractModel):
         )
         for custom_filter in custom_filters:
             field = custom_filter._get_related_field()
-            field_name = "ir_ui_custom_filter_%s" % custom_filter.id
+            field_name = custom_filter.expression
             res["fields"][field_name] = field.get_description(self.env)
             # force this for avoiding to appear on the rest of the UI
             res["fields"][field_name]["selectable"] = False

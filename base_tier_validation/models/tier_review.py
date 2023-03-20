@@ -55,6 +55,9 @@ class TierReview(models.Model):
     approve_sequence = fields.Boolean(
         related="definition_id.approve_sequence", readonly=True
     )
+    approve_sequence_bypass = fields.Boolean(
+        related="definition_id.approve_sequence_bypass", readonly=True
+    )
 
     @api.depends("definition_id.approve_sequence")
     def _compute_can_review(self):
@@ -84,7 +87,7 @@ class TierReview(models.Model):
 
     @api.depends("reviewer_ids")
     def _compute_todo_by(self):
-        """ Show by group or by abbrev list of names """
+        """Show by group or by abbrev list of names"""
         num_show = 3  # Max number of users to display
         for rec in self:
             todo_by = False

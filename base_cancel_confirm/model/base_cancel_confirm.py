@@ -4,7 +4,8 @@ import inspect
 
 from lxml import etree
 
-from odoo import fields, models
+from odoo import _, fields, models, tools
+from odoo.exceptions import ValidationError
 
 
 class BaseCancelConfirm(models.AbstractModel):
@@ -16,6 +17,7 @@ class BaseCancelConfirm(models.AbstractModel):
 
     cancel_confirm = fields.Boolean(
         string="Cancel Confirmed",
+        default=lambda self: self._cancel_confirm_disabled(),
         copy=False,
         help="A flag signify that this document is confirmed for cancellation",
     )
@@ -25,12 +27,20 @@ class BaseCancelConfirm(models.AbstractModel):
         help="An optional cancel reason",
     )
 
+    def _cancel_confirm_disabled(self):
+        key = "%s.cancel_confirm_disable" % self._name
+        res = self.env["ir.config_parameter"].sudo().get_param(key)
+        if not res:
+            return True
+        if res not in ("True", "False"):
+            raise ValidationError(
+                _("Configuration Error (%s), should be 'True' or 'False'") % key
+            )
+        return tools.str2bool(res)
+
     def open_cancel_confirm_wizard(self):
-        action = (
-            self.env.ref("base_cancel_confirm.action_cancel_confirm_wizard")
-            .sudo()
-            .read()[0]
-        )
+        xmlid = "base_cancel_confirm.action_cancel_confirm_wizard"
+        action = self.env["ir.actions.act_window"]._for_xml_id(xmlid)
         action["context"] = {
             "cancel_res_model": self._name,
             "cancel_res_ids": self.ids,

@@ -128,6 +128,7 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: mass_editing
+#: model:ir.actions.server,name:mass_editing.mass_editing_partner
 #: model:ir.actions.server,name:mass_editing.mass_editing_partner_title
 #: model:ir.actions.server,name:mass_editing.mass_editing_user
 msgid "Mass Edit"
@@ -202,6 +203,7 @@ msgstr ""
 #. module: mass_editing
 #: code:addons/mass_editing/wizard/mass_editing_wizard.py:0
 #: code:addons/mass_editing/wizard/mass_editing_wizard.py:0
+#: code:addons/mass_editing/wizard/mass_editing_wizard.py:0
 #, python-format
 msgid "Remove"
 msgstr ""
@@ -223,6 +225,7 @@ msgid "Server Action"
 msgstr ""
 
 #. module: mass_editing
+#: code:addons/mass_editing/wizard/mass_editing_wizard.py:0
 #: code:addons/mass_editing/wizard/mass_editing_wizard.py:0
 #: code:addons/mass_editing/wizard/mass_editing_wizard.py:0
 #, python-format
