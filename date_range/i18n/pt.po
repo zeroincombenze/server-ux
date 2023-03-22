@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-01 02:44+0000\n"
-"PO-Revision-Date: 2020-10-09 00:08+0000\n"
+"PO-Revision-Date: 2019-08-14 12:44+0000\n"
 "Last-Translator: Pedro Castro Silva <pedrocs@exo.pt>\n"
 "Language-Team: Portuguese (https://www.transifex.com/oca/teams/23907/pt/)\n"
 "Language: pt\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 3.10\n"
+"X-Generator: Weblate 3.7.1\n"
 
 #. module: date_range
 #: code:addons/date_range/models/date_range.py:59
@@ -130,10 +130,9 @@ msgstr "Períodos"
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range__display_name
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__display_name
-#: model:ir.model.fields,field_description:date_range.field_date_range_search_mixin__display_name
 #: model:ir.model.fields,field_description:date_range.field_date_range_type__display_name
 msgid "Display Name"
-msgstr "Nome a Exibir"
+msgstr "Nome a Apresentar"
 
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__duration_count
@@ -146,11 +145,6 @@ msgid "End date"
 msgstr "Data de fim"
 
 #. module: date_range
-#: model:ir.model.fields,field_description:date_range.field_date_range_search_mixin__date_range_search_id
-msgid "Filter by period (technical field)"
-msgstr ""
-
-#. module: date_range
 #: model:ir.actions.act_window,name:date_range.date_range_generator_action
 #: model:ir.ui.menu,name:date_range.menu_date_range_generator_action
 #: model_terms:ir.ui.view,arch_db:date_range.date_range_generator_view_form
@@ -160,10 +154,9 @@ msgstr "Gerar Períodos"
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range__id
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__id
-#: model:ir.model.fields,field_description:date_range.field_date_range_search_mixin__id
 #: model:ir.model.fields,field_description:date_range.field_date_range_type__id
 msgid "ID"
-msgstr "Id"
+msgstr "ID"
 
 #. module: date_range
 #: model:ir.model.fields,help:date_range.field_date_range_type__allow_overlap
@@ -173,29 +166,23 @@ msgstr "Se verdadeiro, períodos do mesmo tipo não se podem sobrepôr."
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range____last_update
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator____last_update
-#: model:ir.model.fields,field_description:date_range.field_date_range_search_mixin____last_update
 #: model:ir.model.fields,field_description:date_range.field_date_range_type____last_update
 msgid "Last Modified on"
-msgstr "Última Modificação em"
+msgstr "Modificado a última vez por"
 
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range__write_uid
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__write_uid
 #: model:ir.model.fields,field_description:date_range.field_date_range_type__write_uid
 msgid "Last Updated by"
-msgstr "Última Atualização por"
+msgstr "Atualizado pela última vez por"
 
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range__write_date
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__write_date
 #: model:ir.model.fields,field_description:date_range.field_date_range_type__write_date
 msgid "Last Updated on"
-msgstr "Última Atualização em"
-
-#. module: date_range
-#: model:ir.model,name:date_range.model_date_range_search_mixin
-msgid "Mixin class to add a Many2one style period search field"
-msgstr ""
+msgstr "Atualizado pela última vez em"
 
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range__name
@@ -207,13 +194,6 @@ msgstr "Nome"
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__count
 msgid "Number of ranges to generate"
 msgstr "Número de períodos a gerar"
-
-#. module: date_range
-#: code:addons/date_range/models/date_range_search_mixin.py:79
-#: code:addons/date_range/models/date_range_search_mixin.py:102
-#, python-format
-msgid "Period"
-msgstr ""
 
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__name_prefix

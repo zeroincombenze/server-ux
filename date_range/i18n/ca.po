@@ -9,15 +9,15 @@ msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-01 02:44+0000\n"
-"PO-Revision-Date: 2022-03-22 13:17+0000\n"
-"Last-Translator: Noel estudillo <noelestudilloviera@gmail.com>\n"
+"PO-Revision-Date: 2019-12-27 20:13+0000\n"
+"Last-Translator: Carles Antoli <carlesantoli@hotmail.com>\n"
 "Language-Team: Catalan (https://www.transifex.com/oca/teams/23907/ca/)\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.3.2\n"
+"X-Generator: Weblate 3.10\n"
 
 #. module: date_range
 #: code:addons/date_range/models/date_range.py:59
@@ -130,7 +130,6 @@ msgstr "Rangs de dates"
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range__display_name
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__display_name
-#: model:ir.model.fields,field_description:date_range.field_date_range_search_mixin__display_name
 #: model:ir.model.fields,field_description:date_range.field_date_range_type__display_name
 msgid "Display Name"
 msgstr "Veure el nom"
@@ -146,11 +145,6 @@ msgid "End date"
 msgstr "Data final"
 
 #. module: date_range
-#: model:ir.model.fields,field_description:date_range.field_date_range_search_mixin__date_range_search_id
-msgid "Filter by period (technical field)"
-msgstr "Filtra per període (camp tècnic)"
-
-#. module: date_range
 #: model:ir.actions.act_window,name:date_range.date_range_generator_action
 #: model:ir.ui.menu,name:date_range.menu_date_range_generator_action
 #: model_terms:ir.ui.view,arch_db:date_range.date_range_generator_view_form
@@ -160,7 +154,6 @@ msgstr "Generar rangs de dates"
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range__id
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__id
-#: model:ir.model.fields,field_description:date_range.field_date_range_search_mixin__id
 #: model:ir.model.fields,field_description:date_range.field_date_range_type__id
 msgid "ID"
 msgstr "ID"
@@ -174,7 +167,6 @@ msgstr ""
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range____last_update
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator____last_update
-#: model:ir.model.fields,field_description:date_range.field_date_range_search_mixin____last_update
 #: model:ir.model.fields,field_description:date_range.field_date_range_type____last_update
 msgid "Last Modified on"
 msgstr "Darrera modificació el"
@@ -194,11 +186,6 @@ msgid "Last Updated on"
 msgstr "Darrera Actualització el"
 
 #. module: date_range
-#: model:ir.model,name:date_range.model_date_range_search_mixin
-msgid "Mixin class to add a Many2one style period search field"
-msgstr "Classe Mixin per afegir un camp de cerca de període d'estil Many2one"
-
-#. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range__name
 #: model:ir.model.fields,field_description:date_range.field_date_range_type__name
 msgid "Name"
@@ -208,13 +195,6 @@ msgstr "Nom"
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__count
 msgid "Number of ranges to generate"
 msgstr "Nombre de rangs a generar"
-
-#. module: date_range
-#: code:addons/date_range/models/date_range_search_mixin.py:79
-#: code:addons/date_range/models/date_range_search_mixin.py:102
-#, python-format
-msgid "Period"
-msgstr "Període"
 
 #. module: date_range
 #: model:ir.model.fields,field_description:date_range.field_date_range_generator__name_prefix

@@ -24,6 +24,9 @@ class DateRangeType(models.Model):
         comodel_name='res.company', string='Company', index=1,
         default=_default_company)
     date_range_ids = fields.One2many('date.range', 'type_id', string='Ranges')
+    parent_type_id = fields.Many2one(
+        comodel_name='date.range.type',
+        index=1)
 
     _sql_constraints = [
         ('date_range_type_uniq', 'unique (name,company_id)',
