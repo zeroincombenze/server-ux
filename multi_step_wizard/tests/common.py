@@ -6,7 +6,7 @@ from odoo_test_helper import FakeModelLoader
 from odoo.tests import common
 
 
-class CommonTestMultiStepWizard(common.SavepointCase):
+class CommonTestMultiStepWizard(common.TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -19,4 +19,4 @@ class CommonTestMultiStepWizard(common.SavepointCase):
     @classmethod
     def tearDownClass(cls):
         cls.loader.restore_registry()
-        super().tearDownClass()
+        return super().tearDownClass()

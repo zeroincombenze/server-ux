@@ -37,7 +37,7 @@
                 <button
                         name="validate_tier"
                         string="Validate"
-                        t-attf-attrs="{'invisible': [('can_review', '=', False)]}"
+                        attrs="{'invisible': [('can_review', '=', False)]}"
                         type="object"
                         class="oe_inline oe_button btn-success"
                         icon="fa-thumbs-up"
@@ -45,7 +45,7 @@
                 <button
                         name="reject_tier"
                         string="Reject"
-                        t-attf-attrs="{'invisible': [('can_review', '=', False)]}"
+                        attrs="{'invisible': [('can_review', '=', False)]}"
                         type="object"
                         class="btn-icon btn-danger"
                         icon="fa-thumbs-down"
@@ -86,6 +86,20 @@
             name="review_ids"
             widget="tier_validation"
             attrs="{'invisible':[('review_ids', '=', [])]}"
-        />
+            style="width:100%%; margin-top: 10px;"
+        >
+        <tree>
+            <field name="id" />
+            <field name="name" />
+            <field name="sequence" />
+            <field name="requested_by" />
+            <field name="status" />
+            <field name="todo_by" />
+            <field name="done_by" />
+            <field name="reviewed_date" />
+            <field name="reviewed_formated_date" />
+            <field name="comment" />
+        </tree>
+            </field>
     </template>
 </odoo>

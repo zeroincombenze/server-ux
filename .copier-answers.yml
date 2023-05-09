@@ -11,12 +11,12 @@ github_enable_makepot: true
 github_enable_stale_action: true
 github_enforce_dev_status_compatibility: true
 include_wkhtmltopdf: false
-odoo_version: 14.0
+odoo_version: 16.0
 org_name: Odoo Community Association (OCA)
 org_slug: OCA
 rebel_module_groups: []
-repo_description: Server side features for usability and user experience related.
-repo_name: Server UX
+repo_description: 'TODO: add repo description.'
+repo_name: server-ux
 repo_slug: server-ux
 repo_website: https://github.com/OCA/server-ux
 travis_apt_packages: []
