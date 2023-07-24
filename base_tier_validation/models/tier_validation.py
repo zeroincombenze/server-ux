@@ -81,18 +81,15 @@ class TierValidation(models.AbstractModel):
 
     @api.model
     def _search_can_review(self, operator, value):
-        res_ids = (
-            self.search(
-                [
-                    ("review_ids.reviewer_ids", "=", self.env.user.id),
-                    ("review_ids.status", "=", "pending"),
-                    ("review_ids.can_review", "=", True),
-                    ("rejected", "=", False),
-                ]
-            )
-            .filtered("can_review")
-            .ids
-        )
+        domain = [
+            ("review_ids.reviewer_ids", "=", self.env.user.id),
+            ("review_ids.status", "=", "pending"),
+            ("review_ids.can_review", "=", True),
+            ("rejected", "=", False),
+        ]
+        if "active" in self._fields:
+            domain.append(("active", "in", [True, False]))
+        res_ids = self.search(domain).filtered("can_review").ids
         return [("id", "in", res_ids)]
 
     @api.depends("review_ids")
@@ -201,9 +198,7 @@ class TierValidation(models.AbstractModel):
             tiers = self.env["tier.definition"].search([("model", "=", self._name)])
             valid_tiers = any([rec.evaluate_tier(tier) for tier in tiers])
             rec.need_validation = (
-                not rec.review_ids
-                and valid_tiers
-                and getattr(rec, self._state_field) in self._state_from
+                not rec.review_ids and valid_tiers and rec._check_state_from_condition()
             )
 
     def evaluate_tier(self, tier):
@@ -232,26 +227,18 @@ class TierValidation(models.AbstractModel):
         Check we are in origin state and not destination state
         """
         self.ensure_one()
-        return getattr(self, self._state_field) in self._state_from and not vals.get(
+        return self._check_state_from_condition() and not vals.get(
             self._state_field
         ) in (self._state_to + [self._cancel_state])
 
     def write(self, vals):
-        new_self = self
-        if (
-            "from_review_systray" in self.env.context
-            and "active_test" in self.env.context
-        ):
-            context = self.env.context.copy()
-            context.pop("active_test")
-            new_self = self.with_context(context)
-        for rec in new_self:
+        for rec in self:
             if rec._check_state_conditions(vals):
                 if rec.need_validation:
                     # try to validate operation
                     reviews = rec.request_validation()
                     rec._validate_tier(reviews)
-                    if not new_self._calc_reviews_validated(reviews):
+                    if not self._calc_reviews_validated(reviews):
                         pending_reviews = reviews.filtered(
                             lambda r: r.status == "pending"
                         ).mapped("name")
@@ -274,18 +261,23 @@ class TierValidation(models.AbstractModel):
                 rec.review_ids
                 and rec._check_tier_state_transition(vals)
                 and not rec._check_allow_write_under_validation(vals)
+                and not rec._context.get("skip_validation_check")
             ):
                 raise ValidationError(_("The operation is under validation."))
-        if vals.get(new_self._state_field) in (
-            new_self._state_from + [new_self._cancel_state]
-        ):
-            new_self.mapped("review_ids").unlink()
-        return super(TierValidation, new_self).write(vals)
+        if vals.get(self._state_field) in (self._state_from + [self._cancel_state]):
+            self.mapped("review_ids").unlink()
+        return super(TierValidation, self).write(vals)
+
+    def _check_state_from_condition(self):
+        return self.env.context.get("skip_check_state_condition") or (
+            self._state_field in self._fields
+            and getattr(self, self._state_field) in self._state_from
+        )
 
     def _check_state_conditions(self, vals):
         self.ensure_one()
         return (
-            getattr(self, self._state_field) in self._state_from
+            self._check_state_from_condition()
             and vals.get(self._state_field) in self._state_to
         )
 
@@ -435,7 +427,7 @@ class TierValidation(models.AbstractModel):
         td_obj = self.env["tier.definition"]
         tr_obj = created_trs = self.env["tier.review"]
         for rec in self:
-            if getattr(rec, self._state_field) in self._state_from:
+            if rec._check_state_from_condition():
                 if rec.need_validation:
                     tier_definitions = td_obj.search(
                         [("model", "=", self._name)], order="sequence desc"
@@ -487,6 +479,28 @@ class TierValidation(models.AbstractModel):
         self.mapped("review_ids").unlink()
         return super().unlink()
 
+    def _add_tier_validation_buttons(self, node, params):
+        str_element = self.env["ir.qweb"]._render(
+            "base_tier_validation.tier_validation_buttons", params
+        )
+        new_node = etree.fromstring(str_element)
+        for new_element in new_node:
+            node.addnext(new_element)
+
+    def _add_tier_validation_label(self, node, params):
+        str_element = self.env["ir.qweb"]._render(
+            "base_tier_validation.tier_validation_label", params
+        )
+        new_node = etree.fromstring(str_element)
+        for new_element in new_node:
+            node.addprevious(new_element)
+
+    def _add_tier_validation_reviews(self, node, params):
+        str_element = self.env["ir.qweb"]._render(
+            "base_tier_validation.tier_validation_reviews", params
+        )
+        node.addnext(etree.fromstring(str_element))
+
     @api.model
     def fields_view_get(
         self, view_id=None, view_type="form", toolbar=False, submenu=False
@@ -498,27 +512,15 @@ class TierValidation(models.AbstractModel):
             doc = etree.XML(res["arch"])
             params = {
                 "state_field": self._state_field,
-                "state_from": ",".join("'%s'" % state for state in self._state_from),
+                "state_operator": "not in",
+                "state_value": self._state_from,
             }
             for node in doc.xpath(self._tier_validation_buttons_xpath):
                 # By default, after the last button of the header
-                str_element = self.env["ir.qweb"]._render(
-                    "base_tier_validation.tier_validation_buttons", params
-                )
-                new_node = etree.fromstring(str_element)
-                for new_element in new_node:
-                    node.addnext(new_element)
+                self._add_tier_validation_buttons(node, params)
             for node in doc.xpath("/form/sheet"):
-                str_element = self.env["ir.qweb"]._render(
-                    "base_tier_validation.tier_validation_label", params
-                )
-                new_node = etree.fromstring(str_element)
-                for new_element in new_node:
-                    node.addprevious(new_element)
-                str_element = self.env["ir.qweb"]._render(
-                    "base_tier_validation.tier_validation_reviews", params
-                )
-                node.addnext(etree.fromstring(str_element))
+                self._add_tier_validation_label(node, params)
+                self._add_tier_validation_reviews(node, params)
             View = self.env["ir.ui.view"]
 
             # Override context for postprocessing
